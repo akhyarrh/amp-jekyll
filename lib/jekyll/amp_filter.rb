@@ -83,6 +83,31 @@ module Jekyll
       # Return the html as plaintext string
       doc.to_s
     end
+    # Change iframe to amp-video-iframe
+    # I use youtube embed with iframe
+    # Your use case maybe different
+    #
+    # Taken from: https://github.com/forestguild/amptools/blob/master/lib/jekyll/AmpFilter.rb#L42
+    #
+    # Reference:
+    #
+    # https://amp.dev/documentation/components/amp-video-iframe/
+    # https://pacoup.com/2011/06/12/list-of-true-169-resolutions/
+    def amp_iframes(input)
+      doc = Nokogiri::HTML.fragment(input);
+      doc.css('iframe').each do |iframe|
+        iframe.name = "amp-video-iframe"
+        iframe['sandbox'] = "allow-scripts allow-same-origin"
+        iframe['layout'] = "responsive"
+        if iframe['width'].to_i == 0
+          iframe['width'] = '640px'
+        end
+        if iframe['height'].to_i == 0
+          iframe['height'] = '360px'
+        end
+      end
+      doc.to_s
+    end
   end
 end
 
